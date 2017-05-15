@@ -1,0 +1,94 @@
+<div ng-controller="mycntrl">
+    <h1 class="well">Add Employee Template</h1>
+    <i class="fa fa-hashtag" aria-hidden="true"></i> <b>all fields are required</b>
+	<div class="col-lg-12 well">
+
+	<div class="row">
+				<form name="employeeForm" ng-submit="submitForm(employeeForm.$valid)" novalidate="true">
+					<div class="col-sm-12">
+						<div class="row">
+							<div class="col-sm-6 form-group" ng-class="{ 'has-error' : employeeForm.firstName.$invalid && submitted}">
+								<label>First Name</label>
+								<input type="text" placeholder="Enter First Name Here.." class="form-control" ng-model='user.firstName' name="firstName" ng-minlength='3' required>
+							<!-- 	<p ng-show="employeeForm.firstName.$invalid && !employeeForm.firstName.$pristine" class="help-block">Name is required.</p> -->
+							</div>
+							<div class="col-sm-6 form-group" ng-class="{ 'has-error' : employeeForm.lastName.$invalid && submitted}">
+								<label>Last Name</label>
+								<input type="text" placeholder="Enter Last Name Here.." class="form-control" ng-model='user.lastName' name="lastName" required="true">
+							</div>
+						</div>					
+						<div class="form-group" ng-class="{ 'has-error' : employeeForm.address.$invalid && submitted}">
+							<label>Address</label>
+							<textarea placeholder="Enter Address Here.." rows="3" name="address" class="form-control" ng-model='user.address' required="true"></textarea>
+						</div>	
+						<div class="row">
+							<div class="col-sm-4 form-group" ng-class="{ 'has-error' : employeeForm.city.$invalid && submitted}">
+								<label>City</label>
+								<input type="text" placeholder="Enter City Name Here.." class="form-control" name="city" ng-model='user.city' required="true">
+							</div>	
+							<div class="col-sm-4 form-group" ng-class="{ 'has-error' : employeeForm.state.$invalid && submitted}">
+								<label>State</label>
+								<input type="text" placeholder="Enter State Name Here.." class="form-control" name="state" ng-model='user.state' required="true">
+							</div>	
+							<div class="col-sm-4 form-group" ng-class="{ 'has-error' : employeeForm.pinCode.$invalid && submitted}">
+								<label>PinCode</label>
+								<input type="text" placeholder="Enter Pin Code Here.." class="form-control" name="pinCode" ng-model='user.pin_code' required="true">
+							</div>		
+						</div>
+						<div class="row">
+							<div class="col-sm-6 form-group" ng-class="{ 'has-error' : employeeForm.designation.$invalid && submitted}">
+								<label>Title</label>
+								<input type="text" placeholder="Enter Designation Here.." class="form-control" name="designation" ng-model='user.designation' required="true">
+							</div>		
+							<div class="col-sm-6 form-group" ng-class="{ 'has-error' : employeeForm.dob.$invalid && submitted}">
+								<label>DOB</label>
+								<input type="date" class="form-control" ng-model='user.dob' name="dob" required="true">
+							</div>	
+						</div>	
+
+						<!-- Image -->
+					<div class="form-group" ng-class="{ 'has-error' : employeeForm.file.$invalid && submitted}">
+						<label> Select an image to upload</label>
+						<input type="file" ng-model='file' file-model="picFile" name="file" accept="image/*" ngf-max-size="2MB"  ngf-model-invalid="errorFile" valid-file required>
+						<i ng-show="employeeForm.file.$error.required">*required</i><br>
+						<i ng-show="employeeForm.file.$error.maxSize">File too large 
+          						{{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+						<p ng-show="employeeForm.file.$invalid && submitted" class="help-block">Image is required.</p>
+					</div>	
+
+					<div class="form-group" ng-class="{ 'has-error' : employeeForm.mobile.$invalid && submitted}">
+						<label>Phone Number</label>
+						<input type="text" placeholder="Enter Phone Number Here.." class="form-control" name="mobile" ng-model='user.mobile' required="true">
+					</div>	
+
+					<div class="form-group" ng-class="{ 'has-error' : employeeForm.email.$invalid && submitted }">
+						<label>Email Address</label>
+						<input type="email" placeholder="Enter Email Address Here.." name="email" class="form-control" ng-model='user.email' required="true"	>
+						<p ng-show="employeeForm.email.$invalid && submitted" class="help-block">Enter valid e-mail.</p>
+					</div>	
+						
+					<div class="form-group">
+						<label>Card Details</label>
+						<!-- <input list="cards" placeholder="Enter Website Name Here.." class="form-control" ng-model='user.card_number' required="true"> -->
+						<select ng-model="user.card_number" ng-options="o.label for o in options" class="form-control">
+    					<option value="">-------</option>  <!--not selected option-->
+  						</select>
+						<button type="button" class="btn btn-danger" ng-click="scan()">Scan</button>
+					</div>
+
+
+					<div class="row">
+							<div class="col-sm-6 form-group">
+								<button type="submit" class="btn btn-lg btn-info">Submit</button>
+							</div>		
+							<div class="col-sm-6 form-group">
+								<button type="button" class="btn btn-lg btn-info" ng-click="quit()">Cancel</button>
+							</div>	
+						</div>	
+					
+					</div>
+
+				</form> 
+				</div>
+	</div>
+	</div>
