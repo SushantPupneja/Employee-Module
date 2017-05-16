@@ -25,78 +25,92 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.user.firstName = $stateParams.firstName;
             $scope.user.lastName = $stateParams.lastName;
             $scope.user.email = $stateParams.email;
-            $scope.user.mobile = $stateParams.mobile;
+            $scope.user.mobile = parseInt($stateParams.mobile);
             $scope.user.designation = $stateParams.designation;
             $scope.user.dob = $stateParams.dob;
             $scope.user.address = $stateParams.address;
             $scope.user.city = $stateParams.city;
-            $scope.user.pin_code = $stateParams.pin_code;
+            $scope.user.pin_code = parseInt($stateParams.pin_code);
             $scope.user.state = $stateParams.state;
             $scope.user.card_number = $stateParams.card_number;
 
             $scope.listview = "false";
-
+            $scope.options = [];
+            $scope.scannig = false;
+            $scope.error = false;
             $scope.scan = function(){
+                $scope.scannig = true;
                 $scope.listview = "true";
                 $scope.options = [];
-                $http.get("http://192.168.1.6:9090/Project/scan")
+                $http.get("http://192.168.1.8:9090/Project/scan")
             .success(function(response) {
                 console.log("Hi I am API") // debugging
                 card_list = response["ScanList"];
                 for (var i = 0; i < card_list.length; i++) {
-                var card_number = card_list[i].slice(0,36);
-                var card_number_5 = card_list[i].slice(31,36);
-                var distance = card_list[i].slice(38,40);
-                console.log(distance)
+                    var card_number = card_list[i].slice(0,36);
+                    var card_number_5 = card_list[i].slice(31,36);
+                    var distance = card_list[i].slice(38,40);
+                    console.log(distance)
                 if (distance <= "40"){
                     $scope.options.push({label:card_number_5,value:card_number})
-                }
+                    $scope.user.card_number = $scope.options[0]
+                    $scope.error = false;
                 }
 
-        }).error( function(response) {
-                           alert('Network Error'); 
+                if($scope.options.length ==0){
+                    $scope.error = true;
+                }
+
+                $scope.scannig = false;
+                }
+
+            }).error( function(response) {
+                           alert('Network Error');
+                           $scope.scannig = false; 
                            
-        });
+            });
         }
 
 
             $scope.update = function(isValid){
-                
-                    var formdata = new FormData();
-                    // formdata.append("file", file);
-                    formdata.append("id", $scope.user.id);
-                    formdata.append("firstName", $scope.user.firstName);
-                    formdata.append("lastName", $scope.user.lastName);
-                    formdata.append("email", $scope.user.email);
-                    formdata.append("dob", $scope.user.dob);
-                    formdata.append("mobile", $scope.user.mobile);
-                    formdata.append("address", $scope.user.address);
-                    formdata.append("city", $scope.user.city);
-                    formdata.append("pin_code", $scope.user.pin_code);
-                    formdata.append("state", $scope.user.state);
-                    formdata.append("designation", $scope.user.designation);
-                    formdata.append("card_number", $scope.user.card_number.value);
 
-                    if (isValid) {
-                        $http({
-                            url:"http://127.0.0.1:8080/employee/api/editemployee",
-                            method:'POST',
-                            transformRequest: angular.identity,
-                            headers:{'Content-Type':undefined  },
-                            data: formdata,
-                            }).success(function(response) {
-                            $scope.data = response;
-                            $scope.status = data["Status"];
-                            $scope.message = data["Message"];
-                            console.log(status)
-                            console.log(message)
-                            $state.go('home');
-                            alert('Employee updated successfully');
-                    }).error( function(response) {
-                           alert('Network Error');       
-                });
-                         
+                var formdata = new FormData();
+                // formdata.append("file", file);
+                formdata.append("id", $scope.user.id);
+                formdata.append("firstName", $scope.user.firstName);
+                formdata.append("lastName", $scope.user.lastName);
+                formdata.append("email", $scope.user.email);
+                formdata.append("dob", $scope.user.dob);
+                formdata.append("mobile", $scope.user.mobile);
+                formdata.append("address", $scope.user.address);
+                formdata.append("city", $scope.user.city);
+                formdata.append("pin_code", $scope.user.pin_code);
+                formdata.append("state", $scope.user.state);
+                formdata.append("designation", $scope.user.designation);
+                if($scope.options.length !=0){
+                    formdata.append("card_number", $scope.user.card_number.value);
                 }
+                else{
+                    formdata.append("card_number", $scope.user.card_number);
+                }
+
+                if (isValid) {
+                    for (var value of formdata.entries()) {
+                        console.log(value); }
+                    $http({
+                        url:"http://127.0.0.1:8080/employee/api/editemployee",
+                        method:'POST',
+                        transformRequest: angular.identity,
+                        headers:{'Content-Type':undefined  },
+                        data: formdata,
+                        }).success(function(response) {
+                        $state.go('home');
+                        alert('Employee updated successfully');
+                }).error( function(response) {
+                       alert('Network Error');       
+            });
+                     
+            }
 
             };
 
@@ -179,12 +193,13 @@ myApp.controller('mycntrl', function($scope,$state,$http) {
     $scope.user = {}
     $scope.scannig = false;
     $scope.error = false;
+    $scope.options = [];
 
     $scope.scan = function(){
         $scope.error = false;
         $scope.options = [];
         $scope.scannig = true;
-        $http.get("http://192.168.1.11:9090/Project/scan")
+        $http.get("http://192.168.1.8:9090/Project/scan")
     .success(function(response) {
         console.log("Hi I am API") // debugging
         card_list = response["ScanList"];
@@ -231,17 +246,23 @@ myApp.controller('mycntrl', function($scope,$state,$http) {
         formdata.append("pin_code", $scope.user.pin_code);
         formdata.append("state", $scope.user.state);
         formdata.append("designation", $scope.user.designation);
-        formdata.append("card_number", $scope.user.card_number.value);
-        // for (var value of formdata.values()) {
-        //     console.log(value); }
+        if($scope.options.length !=0){
+                formdata.append("card_number", $scope.user.card_number.value);
+            }
+        else {formdata.append("card_number", "");}
+        
+        for (var value of formdata.values()) {
+            console.log(value); }
     // check to make sure the form is completely valid
         if (isValid) {
+            for (var value of formdata.values()) {
+                console.log(value); }
             $http({
                 url:"http://127.0.0.1:8080/employee/api/addemployee",
                 method:'POST',
                 transformRequest: angular.identity,
                 headers:{'Content-Type': undefined},
-                data: formdata
+                data:formdata
                 }).success(function(response) {
                     $state.go($state.current, {}, {reload: true});
                     alert('Employee addded successfully');
@@ -379,10 +400,6 @@ myApp.controller('listemployee', function($scope,$state,$http) {
             data: employee,
             }).success(function(response) {
             $scope.data = response;
-            $scope.status = data["Status"];
-            $scope.message = data["Message"];
-            console.log(status)
-            console.log(message)
             $state.go($state.current, {}, {reload: true});
             alert('Employee deleted');
         }).error( function(response) {
