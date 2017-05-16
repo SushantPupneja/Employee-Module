@@ -39,7 +39,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
             $scope.scan = function(){
                 $scope.listview = "true";
                 $scope.options = [];
-                $http.get("http://192.168.1.10:9090/Project/scan")
+                $http.get("http://192.168.1.6:9090/Project/scan")
             .success(function(response) {
                 console.log("Hi I am API") // debugging
                 card_list = response["ScanList"];
@@ -49,10 +49,13 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
                 var distance = card_list[i].slice(38,40);
                 console.log(distance)
                 if (distance <= "40"){
-                    $scope.options.push({label:"XXXXXXXXXXXXXXXXX" + card_number_5,value:card_number})
+                    $scope.options.push({label:card_number_5,value:card_number})
                 }
                 }
 
+        }).error( function(response) {
+                           alert('Network Error'); 
+                           
         });
         }
 
@@ -81,15 +84,18 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
                             transformRequest: angular.identity,
                             headers:{'Content-Type':undefined  },
                             data: formdata,
-                            }).then(function(response) {
+                            }).success(function(response) {
                             $scope.data = response;
                             $scope.status = data["Status"];
                             $scope.message = data["Message"];
                             console.log(status)
                             console.log(message)
-                    });
-                    $state.go('home');
-                    alert('Employee updated successfully');     
+                            $state.go('home');
+                            alert('Employee updated successfully');
+                    }).error( function(response) {
+                           alert('Network Error');       
+                });
+                         
                 }
 
             };
@@ -171,22 +177,37 @@ myApp.controller('mycntrl', function($scope,$state,$http) {
 
    
     $scope.user = {}
+    $scope.scannig = false;
+    $scope.error = false;
 
     $scope.scan = function(){
+        $scope.error = false;
         $scope.options = [];
-        $http.get("http://192.168.1.10:9090/Project/scan")
+        $scope.scannig = true;
+        $http.get("http://192.168.1.11:9090/Project/scan")
     .success(function(response) {
         console.log("Hi I am API") // debugging
         card_list = response["ScanList"];
         for (var i = 0; i < card_list.length; i++) {
-            var card_number = card_list[i].slice(0,36);
+            var card_number_scanned = card_list[i].slice(0,36);
             var card_number_5 = card_list[i].slice(31,36);
             var distance = card_list[i].slice(38,40);
             console.log(distance)
             if (distance <= "40"){
-            $scope.options.push({label:"XXXXXXXXXXXXXXXXX" + card_number_5,value:card_number})
+            $scope.options.push({label:card_number_5,value:card_number_scanned})
+                if($scope.options.length !=0){
+                    $scope.user.card_number = $scope.options[0]
+                    $scope.error = false;
+                } 
             }
+            if($scope.options.length ==0){
+                $scope.error = true;
+            }
+            $scope.scannig = false;
         }
+        }).error( function(response) {
+                           alert('Network Error'); 
+                           $scope.scannig = false;
         });
     }
      
@@ -221,13 +242,13 @@ myApp.controller('mycntrl', function($scope,$state,$http) {
                 transformRequest: angular.identity,
                 headers:{'Content-Type': undefined},
                 data: formdata
-                }).then(function(response) {
-                // $scope.data = response.data;
-                // $scope.status = data["Status"];
-                // $scope.message = data["message"];
-            });
-            $state.go($state.current, {}, {reload: true});
-            alert('Employee addded successfully');     
+                }).success(function(response) {
+                    $state.go($state.current, {}, {reload: true});
+                    alert('Employee addded successfully');
+            }).error( function(response) {
+                           alert('Network Error');       
+                });
+                 
         }
         
     };
@@ -283,7 +304,9 @@ myApp.controller('listemployee', function($scope,$state,$http) {
     .success(function(response) {
         console.log("Hi I am API") // debugging
         $scope.items = response["employee_list"];
-        });
+        }).error( function(response) {
+                           alert('Network Error');       
+    });
     
     for (var i=0, length=$scope.items.length; i < length; i++ ){
         $scope.editingdata[$scope.items[i].id] = false;
@@ -329,15 +352,17 @@ myApp.controller('listemployee', function($scope,$state,$http) {
             transformRequest: angular.identity,
             headers:{'Content-Type':undefined  },
             data: formdata,
-            }).then(function(response) {
+            }).success(function(response) {
             $scope.data = response;
             $scope.status = data["Status"];
             $scope.message = data["Message"];
+            $state.go($state.current, {}, {reload: true});
+            alert('Employee updated');
             console.log(status)
             console.log(message)
+        }).error( function(response) {
+                           alert('Network Error');       
         });
-        $state.go($state.current, {}, {reload: true});
-        alert('Employee updated');
         
     };
 
@@ -352,16 +377,17 @@ myApp.controller('listemployee', function($scope,$state,$http) {
             method:'POST',
             headers:{'Content-Type':undefined  },
             data: employee,
-            }).then(function(response) {
+            }).success(function(response) {
             $scope.data = response;
             $scope.status = data["Status"];
             $scope.message = data["Message"];
             console.log(status)
             console.log(message)
-        });
-        $state.go($state.current, {}, {reload: true});
-        alert('Employee deleted');
-             
+            $state.go($state.current, {}, {reload: true});
+            alert('Employee deleted');
+        }).error( function(response) {
+                alert('Network Error');       
+    });     
         };
 });
 
@@ -374,10 +400,12 @@ myApp.controller('httpcntrl', function($scope,$http) {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         data: "UniqueId=" + '555'+'&'+ "LaneNumber=" + 'sdg',
 
-        }).then(function(response) {
+        }).success(function(response) {
         $scope.myWelcome = response.data;
         $scope.statuscode = response.status;
-    });
+    }).error( function(response) {
+            alert('Network Error');       
+    });     
 
 });
 
