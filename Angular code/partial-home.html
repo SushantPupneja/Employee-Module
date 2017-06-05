@@ -1,0 +1,84 @@
+<div ng-controller="listemployee">
+  <table class="table table-striped table-bordered">
+  <tr>
+  	<th>ID</th>
+  	<th>FirstName</th>
+  	<th>LastName</th>
+  	<th>DOB</th>
+  	<th>Address</th>
+  	<th>City</th>
+  	<th>State</th>
+  	<th>PinCode</th>
+    <th>Title</th>
+    <th>E-mail</th>
+  	<th>Mobile</th>
+    <!-- <th>Card Details</th> -->
+  	<th>Edit</th>
+  	<th>Action</th>
+  
+    
+  </tr>
+    <tr ng-repeat="item in items">
+
+      <td>{{ item.id }}</td>
+
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.firstName}}</div>
+      <div><input class="form-control" type="text" ng-model="item.firstName" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.lastName}}</div>
+      <div><input class="form-control" type="text" ng-model="item.lastName" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.dob}}</div>
+      <div><input class="form-control" type="date" ng-model="item.dob" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.address}}</div>
+      <div><input class="form-control" type="text" ng-model="item.address" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.city}}</div>
+      <div><input class="form-control" type="text" ng-model="item.city" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.state}}</div>
+      <div><input class="form-control" type="text" ng-model="item.state" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.pin_code}}</div>
+      <div><input class="form-control" type="text" ng-model="item.pin_code" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.designation}}</div>
+      <div><input class="form-control" type="text" ng-model="item.designation" ng-show="editingdata[item.id]"/></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.email}}</div>
+      <div><input class="form-control" type="text" ng-model="item.email" ng-show="editingdata[item.id]"/></div>
+      </td>
+
+      <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.mobile}}</div>
+      <div><input class="form-control" type="text" ng-model="item.mobile" ng-show="editingdata[item.id]" size="5" /></div>
+      </td>
+
+      <!-- <td><div ng-hide="editingdata[item.id]" ng-dblclick="doubleClick(item);">{{item.card_number}}</div>
+      <div><input class="form-control" type="text" ng-model="item.card_number" ng-show="editingdata[item.id]" size="5" /></div>
+      </td> -->
+
+      <td><div ng-hide="editingdata[item.id]"><a href="" ng-click="edit(item);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></div>
+      <div ng-show="editingdata[item.id]"><a href="" ng-click="update(item);"><i class="fa fa-floppy-o" aria-hidden="true"></i></a></div>
+      <div ng-show="editingdata[item.id]"><a href="" ng-click="cancel();"><i class="fa fa-undo" aria-hidden="true"></i></a></div></td>
+
+
+      <td><a href="" ng-click="remove(item);"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+
+  </table>
+
+</div> 
+
+
+<div ui-view>
+
+</div>
